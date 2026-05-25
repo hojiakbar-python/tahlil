@@ -1,0 +1,77 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install --prefer-binary -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build EXE
+        shell: pwsh
+        run: |
+          pyinstaller `
+            --name tahlil `
+            --onefile `
+            --windowed `
+            --noconfirm `
+            --collect-all torchxrayvision `
+            --collect-all customtkinter `
+            --collect-all tkinterdnd2 `
+            --collect-submodules pytorch_grad_cam `
+            --collect-submodules reportlab `
+            --collect-submodules skimage `
+            --collect-submodules cv2 `
+            --exclude-module matplotlib `
+            --exclude-module pandas `
+            --exclude-module IPython `
+            --exclude-module jupyter `
+            --exclude-module notebook `
+            --exclude-module pytest `
+            main.py
+
+      - name: Verify EXE exists
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "dist\tahlil.exe")) {
+            Write-Error "dist\tahlil.exe topilmadi!"
+            exit 1
+          }
+          $size = (Get-Item "dist\tahlil.exe").Length / 1MB
+          Write-Host ("EXE hajmi: {0:N1} MB" -f $size)
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tahlil-windows-exe
+          path: dist/tahlil.exe
+          retention-days: 30
+
+      - name: Create release (on tag push)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/tahlil.exe
+          generate_release_notes: true

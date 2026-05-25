@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# Local data
+tahlil_tarix.db
+hisobotlar/
+namunalar/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Loose images / artifacts
+download*.jpeg
+download*.jpg
+soglom.jpeg
+soglom.jpg
