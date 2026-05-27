@@ -44,6 +44,14 @@ jobs:
             --collect-submodules reportlab `
             --collect-submodules skimage `
             --collect-submodules cv2 `
+            --copy-metadata imageio `
+            --copy-metadata numpy `
+            --copy-metadata torch `
+            --copy-metadata torchvision `
+            --copy-metadata tqdm `
+            --copy-metadata pillow `
+            --copy-metadata scikit-image `
+            --copy-metadata torchxrayvision `
             --exclude-module matplotlib `
             --exclude-module pandas `
             --exclude-module IPython `
